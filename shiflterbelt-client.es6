@@ -5,13 +5,21 @@
 import events from "events"
 import socketClient from 'socket.io-client'
 import validUrl from 'valid-url'
+import getmac from 'getmac'
 
 function validateOption(options) {
+    let extras = {
+        mac_address: (value) => {
+            return getmac.isMac(value);
+        }
+    };
+
     let optionSchema = {
         url: { type: "string" },
         applicationId: { type: "number" },
-        key: { type: "string", len: 4 },
-        password: { type : "string", len: 4 }
+        key: { type: "string", len: 40 },
+        password: { type : "string", len: 80 },
+        macAddress: { type: "string", len: 17, extra: ["mac_address"] }
     };
 
     let valide = (key, value) => {
@@ -23,6 +31,14 @@ function validateOption(options) {
         }
         if (optionSchema[key].hasOwnProperty('len') && value.length !== optionSchema[key].len) {
             return new Error(`The length of: ${key}, is not equal to ${optionSchema[key].len}`);
+        }
+        if (optionSchema[key].hasOwnProperty('extras')) {
+            let result = optionSchema[key]['extras'].filter((extra) => {
+                return !extras[extra](value)
+            });
+            if (result>0) {
+                return new Error(`There is an error in the extras values ${result}`);
+            }
         }
         return value;
     };
@@ -71,7 +87,10 @@ export default class ShifterbeltClient {
         this._obj1 = new events.EventEmitter();
         this._obj2 = new events.EventEmitter();
         this._connected = false;
-        this.init( options );
+        getmac.getMac((err, macAddress) => {
+            options.macAddress = macAddress;
+            this.init(options);
+        });
     }
 
     init(options) {
@@ -90,19 +109,30 @@ export default class ShifterbeltClient {
             this._socket.on('authenticated', () => {
                 this._connected = true;
                 this._socket.on('message', (message) => {
-                    let keys = Object.keys(message);
+                    let chunk = {};
+                    if (message.hasOwnProperty('content')) {
+                        let result = JSON.parse(message.content.toString());
+                        chunk[result['key']] = JSON.parse(result['value']);
+                    } else {
+                        chunk = message;
+                    }
+                    var keys = Object.keys(chunk);
                     if (keys.length !== 1) {
                         return;
                     }
-                    this._obj1.emit(keys[0], message[keys[0]]);
+                    this._obj1.emit(keys[0], chunk[keys[0]]);
                 });
                 this._obj2.addListener('send', (data) => {
+                    /*
                     let jsonObj = JSON.parse(data);
+
                     if (!jsonObj.value) {
                         this._socket.emit(jsonObj.key);
                         return;
                     }
                     this._socket.emit(jsonObj.key, jsonObj.value);
+                    */
+                    this._socket.emit('message', data);
                 });
                 this._obj1.emit('connect');
             });
