@@ -1,11 +1,11 @@
 import ShifterbeltClient from './shiflterbelt-client.js'
 
 let shifterbeltClient = new ShifterbeltClient({
-  url: 'http://localhost:3000/ns',
+  url: 'http://localhost:3000/ns', // TODO: Hard code the url
   applicationId: 998494289165,
-  key: process.argv.slice(2, 3)[0] || 'd9bc1414249500b884a432bda1e4cb378b1945b5',
-  password: process.argv.slice(3, 4)[0] || 'M+cKkcKtMfjQc03NfwKwKKA3FzO3RwJXwFBZb9J4eIany5o8hN/3pf6JMDKH9+k/6SgklrqWf7G5yFeV',
-  macAddress: process.argv.slice(4).toString()
+  key: process.argv.slice(2, 3)[0] || 'd9bc1414249500b884a432bda1e4cb378b1945b5', // TODO: Change This
+  password: process.argv.slice(3, 4)[0] || 'M+cKkcKtMfjQc03NfwKwKKA3FzO3RwJXwFBZb9J4eIany5o8hN/3pf6JMDKH9+k/6SgklrqWf7G5yFeV', // TODO: Change this
+  macAddress: process.argv.slice(4).toString() // TODO: Remove This
 });
 
 shifterbeltClient.on('connect', function() {
