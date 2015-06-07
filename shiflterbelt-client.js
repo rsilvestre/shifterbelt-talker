@@ -36,72 +36,6 @@ var _libAnalyseMessageJs2 = _interopRequireDefault(_libAnalyseMessageJs);
 
 var _util = require('util');
 
-var Exchange = (function () {
-  function Exchange(messageOut, messageIn) {
-    _classCallCheck(this, Exchange);
-
-    this._messageOut = messageOut;
-    this._messageIn = messageIn;
-  }
-
-  _createClass(Exchange, [{
-    key: 'on',
-
-    /**
-     *
-     * @param {String} event
-     * @param {Function} callback
-     */
-    value: function on(event, callback) {
-      this._messageIn.addListener(event, callback);
-    }
-  }, {
-    key: 'emit',
-
-    /**
-     *
-     * @param {String} event
-     * @param {Arguments} args
-     */
-    value: function emit(event) {
-      for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-        args[_key - 1] = arguments[_key];
-      }
-
-      if (!this._connected) {
-        return;
-      }
-      var message = undefined;
-      var callback = null;
-      if (args.length === 0) {
-        message = null;
-      }
-      if (args.length === 1) {
-        if ('function' === typeof args[0]) {
-          callback = args[0];
-        } else {
-          message = args[0];
-        }
-      }
-      if (args.length > 1) {
-        var sliceTotal = args.length;
-        if ('function' === typeof args.length) {
-          sliceTotal = sliceTotal - 1;
-          callback = args[sliceTotal - 1];
-        }
-        message = args.slice(0, sliceTotal).join(' ');
-      }
-      this._messageOut.emit('send', JSON.stringify({ key: event, value: message }));
-
-      if (callback) {
-        callback();
-      }
-    }
-  }]);
-
-  return Exchange;
-})();
-
 var ShifterbeltClient = (function () {
   /**
    *
@@ -116,7 +50,9 @@ var ShifterbeltClient = (function () {
     this._messageInternalOut = new _events2['default'].EventEmitter();
     this._messageOut = new _events2['default'].EventEmitter();
     this._messageIn = new _events2['default'].EventEmitter();
-    this._connected = false;
+
+    this._analyseMessage = {};
+    this._exchange = {};
 
     // Setted dynamically
     this._masters = {};
@@ -157,14 +93,12 @@ var ShifterbeltClient = (function () {
         _this2._socket.emit('authenticate', JSON.stringify(valide.result.raw));
 
         _this2._socket.on('authenticated', function () {
-          _this2._connected = true;
-
           _this2._authenticated();
         });
       });
 
       this._socket.on('disconnect', function () {
-        _this2._connected = false;
+        _this2._exchange.isConnected = false;
       });
     }
   }, {
@@ -177,6 +111,15 @@ var ShifterbeltClient = (function () {
     value: function _authenticated() {
       var _this3 = this;
 
+      this._analyseMessage = new _libAnalyseMessageJs2['default'](this, function (role) {
+        var Exchange = require('./lib/Exchange' + role.charAt(0).toUpperCase() + '' + role.substring(1).toLowerCase() + '.js');
+
+        _this3._exchange = new Exchange(_this3._messageOut, _this3._messageIn, role);
+        _this3._exchange.isConnected = true;
+
+        _this3._messageInternalOut.emit('connect', _this3._exchange);
+      });
+
       this._socket.on('message', function (message) {
         _this3._internalOnMessage(message);
       });
@@ -185,11 +128,20 @@ var ShifterbeltClient = (function () {
         _this3._internelOnService(message);
       });
 
-      this._messageOut.addListener('send', function (data) {
-        _this3._socket.emit('message', data);
-      });
+      this._messageOut.addListener('send', function () {
+        for (var _len = arguments.length, data = Array(_len), _key = 0; _key < _len; _key++) {
+          data[_key] = arguments[_key];
+        }
 
-      this._messageInternalOut.emit('connect', new Exchange(this._messageOut, this._messageIn));
+        if (data.length === 1) {
+          return _this3._socket.emit('message', data[0]);
+        }
+
+        _this3._socket.emit('message', JSON.stringify({
+          key: data[0],
+          message: data[1]
+        }));
+      });
     }
   }, {
     key: '_internalOnMessage',
@@ -200,20 +152,22 @@ var ShifterbeltClient = (function () {
      * @private
      */
     value: function _internalOnMessage(message) {
-      var chunk = {};
 
       if (message.hasOwnProperty('content')) {
         var result = JSON.parse(message.content.toString());
 
-        chunk[result['key']] = result['value'];
-      } else {
-        chunk = message;
+        if (result.hasOwnProperty('slaveId')) {
+          return this._messageIn.emit(result['key'], result['slaveId'], result['value']);
+        } else {
+          return this._messageIn.emit(result['key'], result['value']);
+        }
       }
-      var keys = Object.keys(chunk);
+
+      var keys = Object.keys(message);
       if (keys.length !== 1) {
         return;
       }
-      this._messageIn.emit(keys[0], chunk[keys[0]]);
+      this._messageIn.emit(keys[0], message[keys[0]]);
     }
   }, {
     key: '_internelOnService',
@@ -224,7 +178,7 @@ var ShifterbeltClient = (function () {
      * @private
      */
     value: function _internelOnService(message) {
-      new _libAnalyseMessageJs2['default'](message, this).init();
+      this._analyseMessage.execute(message);
     }
   }, {
     key: 'on',

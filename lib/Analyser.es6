@@ -11,7 +11,7 @@ export default class Analyser {
 
   init() {
     try {
-      this[this._context['role']]();
+      this[`_${this._context['role']}`]();
     } catch (e) {
       console.warn(e);
     }

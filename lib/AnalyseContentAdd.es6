@@ -9,7 +9,7 @@ export default class AnalyseContentAdd extends Analyser {
     super(content, context);
   }
 
-  master() {
+  _master() {
     let listName = `_${this._content['role']}s`;
     if (!this._context.hasOwnProperty(listName)) {
       return;
