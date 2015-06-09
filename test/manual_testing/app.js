@@ -1,9 +1,11 @@
-var ShifterbeltClient = require('../lib/ShiflterbeltClient.js');
+var ShifterbeltClient = require('../../lib/ShiflterbeltClient.js');
 
 var shifterbeltClient = new ShifterbeltClient({
-  applicationId: APP_ID,
-  key: "KEY",
-  password: "PASSWORD",
+  url: String(process.argv.slice(2,3)[0]),
+  applicationId: Number(process.argv.slice(3, 4)[0]),
+  key: process.argv.slice(4, 5)[0],
+  password: process.argv.slice(5, 6)[0],
+  macAddress: process.argv.slice(6).toString()
 });
 
 shifterbeltClient.on('connect', function(socket) {
@@ -17,7 +19,7 @@ shifterbeltClient.on('connect', function(socket) {
 
   if (socket.role === "master") {
     setInterval(function() {
-      socket.emit('test', 'MAC_ADDRESS_OF_THE_SLAVE', 'first device message, ' + (count++));
+      socket.emit('test', 'b8e8563aa597', 'first device message, ' + (count++));
     }, 3000);
   }
 
