@@ -1,0 +1,8 @@
+src/
+
+lib/*.js.map
+
+lib/lib/*.js.map
+
+node_modules/
+
