@@ -1,4 +1,4 @@
-import ShifterbeltClient from '../shiflterbelt-client.js'
+import ShifterbeltClient from '../ShiflterbeltClient.js'
 
 let shifterbeltClient = new ShifterbeltClient({
   url: String(process.argv.slice(2,3)[0]),
@@ -9,7 +9,7 @@ let shifterbeltClient = new ShifterbeltClient({
 });
 
 shifterbeltClient.on('connect', (socket) => {
-  console.log("connected on port 3000");
+  console.log("connected on Shifterbelt");
   let count = 0;
   if (socket.role === "slave") {
     setInterval(()=> {

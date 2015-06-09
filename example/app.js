@@ -2,11 +2,11 @@
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-var _shiflterbeltClientJs = require('../shiflterbelt-client.js');
+var _ShiflterbeltClientJs = require('../ShiflterbeltClient.js');
 
-var _shiflterbeltClientJs2 = _interopRequireDefault(_shiflterbeltClientJs);
+var _ShiflterbeltClientJs2 = _interopRequireDefault(_ShiflterbeltClientJs);
 
-var shifterbeltClient = new _shiflterbeltClientJs2['default']({
+var shifterbeltClient = new _ShiflterbeltClientJs2['default']({
   url: String(process.argv.slice(2, 3)[0]),
   applicationId: Number(process.argv.slice(3, 4)[0]),
   key: process.argv.slice(4, 5)[0],
@@ -15,7 +15,7 @@ var shifterbeltClient = new _shiflterbeltClientJs2['default']({
 });
 
 shifterbeltClient.on('connect', function (socket) {
-  console.log('connected on port 3000');
+  console.log('connected on Shifterbelt');
   var count = 0;
   if (socket.role === 'slave') {
     setInterval(function () {

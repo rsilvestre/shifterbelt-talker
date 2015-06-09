@@ -13,7 +13,7 @@ import { _extend } from 'util'
 export default class ShifterbeltClient {
   /**
    *
-   * @param {{}} options
+   * @param {Object} options
    */
   constructor(options) {
     this._messageInternalOut = new events.EventEmitter();
@@ -28,7 +28,7 @@ export default class ShifterbeltClient {
     this._managers = {};
     this._slaves = {};
 
-    options = _extend({ url: "http://www.shifterbelt.com/ns" }, options);
+    options = _extend({ url: "http://socket.shifterbelt.com/ns" }, options);
 
     getmac.getMac((err, macAddress) => {
       options.macAddress = options.macAddress || macAddress; // TODO : Remove: "options.macAddress ||"
@@ -38,7 +38,7 @@ export default class ShifterbeltClient {
 
   /**
    *
-   * @param {{}} options
+   * @param {Object} options
    */
   init(options) {
 

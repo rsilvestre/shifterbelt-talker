@@ -39,7 +39,7 @@ var _util = require('util');
 var ShifterbeltClient = (function () {
   /**
    *
-   * @param {{}} options
+   * @param {Object} options
    */
 
   function ShifterbeltClient(options) {
@@ -59,7 +59,7 @@ var ShifterbeltClient = (function () {
     this._managers = {};
     this._slaves = {};
 
-    options = (0, _util._extend)({ url: 'http://www.shifterbelt.com/ns' }, options);
+    options = (0, _util._extend)({ url: 'http://socket.shifterbelt.com/ns' }, options);
 
     _getmac2['default'].getMac(function (err, macAddress) {
       options.macAddress = options.macAddress || macAddress; // TODO : Remove: "options.macAddress ||"
@@ -72,7 +72,7 @@ var ShifterbeltClient = (function () {
 
     /**
      *
-     * @param {{}} options
+     * @param {Object} options
      */
     value: function init(options) {
       var _this2 = this;
@@ -199,4 +199,4 @@ var ShifterbeltClient = (function () {
 exports['default'] = ShifterbeltClient;
 module.exports = exports['default'];
 
-//# sourceMappingURL=shiflterbelt-client.js.map
+//# sourceMappingURL=ShiflterbeltClient.js.map
