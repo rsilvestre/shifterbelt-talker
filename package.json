@@ -1,6 +1,6 @@
 {
   "name": "shifterbelt-talker",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Client to connect on shifterbelt",
   "main": "lib/ShifterbeltClient.js",
   "scripts": {
@@ -16,5 +16,8 @@
     "socket.io-events": "^0.4.6",
     "socketio-wildcard": "^0.1.1",
     "valid-url": "^1.0.9"
+  },
+  "devDependencies": {
+    "babel": "^5.4.4"
   }
 }
