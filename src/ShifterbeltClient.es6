@@ -52,7 +52,7 @@ export default class ShifterbeltClient {
 
     this._socket.on('connect', () => {
       this._socket.on('error_system', (message) => {
-        this._messageInternalOut.emit('error_system', message);
+        this._messageInternalOut.emit('error', message);
       });
 
       this._socket.emit('authenticate', JSON.stringify(valide.result.raw));

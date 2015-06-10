@@ -42,6 +42,6 @@ shifterbeltClient.on('connect', function(socket) {
   });
 });
 
-shifterbeltClient.on('error_system', function(message) {
+shifterbeltClient.on('error', function(message) {
   console.log('There is an error: ' + message);
 });
