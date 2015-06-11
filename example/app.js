@@ -1,4 +1,4 @@
-var ShifterbeltClient = require('../lib/ShiflterbeltClient.js');
+var ShifterbeltClient = require('../lib/ShifterbeltClient.js');
 
 var shifterbeltClient = new ShifterbeltClient({
   applicationId: APP_ID,

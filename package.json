@@ -1,12 +1,12 @@
 {
   "name": "shifterbelt-talker",
-  "version": "0.1.9",
+  "version": "0.1.10",
   "preferGlobal": false,
   "description": "Client to connect on shifterbelt",
   "main": "lib/ShifterbeltClient.js",
   "scripts": {
     "test": "mocha",
-    "compile": "babel -d lib/ src/",
+    "compile": "babel src --source-maps --out-dir lib",
     "prepublish": "npm run compile"
   },
   "author": "Michael Silvestre <willtard@gmail.com> (http://www.shifterbelt.com)",

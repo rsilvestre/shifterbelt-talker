@@ -5,7 +5,7 @@ var shifterbeltClient = new ShifterbeltClient({
   applicationId: Number(process.argv.slice(3, 4)[0]),
   key: process.argv.slice(4, 5)[0],
   password: process.argv.slice(5, 6)[0],
-  macAddress: process.argv.slice(6).toString()
+  //macAddress: process.argv.slice(6).toString()
 });
 
 shifterbeltClient.on('connect', function(socket) {
@@ -22,6 +22,10 @@ shifterbeltClient.on('connect', function(socket) {
       socket.emit('test', 'b8e8563aa597', 'first device message, ' + (count++));
     }, 3000);
   }
+
+  socket.on('gps_data', function(sender, message){
+    console.log('message from: ' + sender + ', contain: ' + message);
+  });
 
   socket.on('event', function(message) {
     console.log('message: ' + message);

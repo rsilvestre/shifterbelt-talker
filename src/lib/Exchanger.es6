@@ -61,7 +61,7 @@ export default class Exchanger {
 
   /**
    *
-   * @param {boolean|Boolean|*} value
+   * @param {boolean|Boolean} value
    */
   set isConnected(value) {
     this._connected = value;
@@ -69,7 +69,7 @@ export default class Exchanger {
 
   /**
    *
-   * @returns {boolean|Boolean|*}
+   * @returns {boolean|Boolean}
    */
   get isConnected() {
     return this._connected;
