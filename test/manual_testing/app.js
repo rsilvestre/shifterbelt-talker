@@ -40,12 +40,6 @@ shifterbeltClient.on('connect', function(socket) {
     });
   }
 
-  if (socket.role === "master") {
-    socket.on('test', function(sender, message) {
-      console.log('sender: ' + sender + ', message: ' + message);
-    });
-  }
-
   socket.on('disconnect', function() {
     console.log("has been disconnected");
   });

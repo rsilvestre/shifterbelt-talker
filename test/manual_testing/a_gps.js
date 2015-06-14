@@ -10,21 +10,14 @@ var shifterbeltClient = new ShifterbeltClient({
 
 shifterbeltClient.on('connect', function(socket) {
   console.log("connected on Shifterbelt");
-  var count = 0;
-  if (socket.role === "slave") {
-    setInterval(function() {
-      socket.emit('test', "first device message, " +  (count++) );
-    }, 3000);
-  }
-
-  if (socket.role === "master") {
-    setInterval(function() {
-      socket.emit('test', 'b8e8563aa597', 'first device message, ' + (count++));
-    }, 3000);
-  }
-
-  socket.on('gps_data', function(sender, message){
-    console.log('message from: ' + sender + ', contain: ' + message);
+  socket.on('connect', function(service) {
+    console.log('device connected');
+    socket.on('gps_data', function(message){
+      console.log('message from: ' + service.deviceId + ', contain: ' + message);
+    });
+    service.on('disconnect', function() {
+      console.warn('The device: ' + service.deviceId + ', has been disconnected');
+    })
   });
 
   socket.on('event', function(message) {

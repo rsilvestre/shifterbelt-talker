@@ -8,18 +8,26 @@ var shifterbeltClient = new ShifterbeltClient({
 
 shifterbeltClient.on('connect', function(socket) {
   console.log("connected on Shifterbelt");
-  var count = 0;
-  if (socket.role === "slave") {
-    setInterval(function() {
-      socket.emit('test', "first device message, " +  (count++) );
+  socket.on('connect', function(service) {
+    console.log('device connected');
+    service.on('test', function(message) {
+      console.log('sender: ' + service.deviceId + ', message: ' + message);
+    });
+    var countMaster = 0;
+    var intervalStop = setInterval(function() {
+      service.emit('test', 'first device message, ' + (countMaster++));
     }, 3000);
-  }
+    service.on('disconnect', function() {
+      clearInterval(intervalStop);
+    })
+  });
 
-  if (socket.role === "master") {
-    setInterval(function() {
-      socket.emit('test', 'MAC_ADDRESS_OF_THE_SLAVE', 'first device message, ' + (count++));
-    }, 3000);
-  }
+  //var countSlave = 0;
+  //if (socket.role === "slave") {
+  //  setInterval(function() {
+  //    socket.emit('test', "first device message, " + (countSlave++));
+  //  }, 3000);
+  //}
 
   socket.on('event', function(message) {
     console.log('message: ' + message);
@@ -28,12 +36,6 @@ shifterbeltClient.on('connect', function(socket) {
   if (socket.role === "slave") {
     socket.on('test', function(message) {
       console.log('message: '+ message);
-    });
-  }
-
-  if (socket.role === "master") {
-      socket.on('test', function(sender, message) {
-      console.log('sender: ' + sender + ', message: ' + message);
     });
   }
 
