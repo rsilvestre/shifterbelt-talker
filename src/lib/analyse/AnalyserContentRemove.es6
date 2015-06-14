@@ -14,8 +14,9 @@ export default class AnalyseContentRemove extends Analyser {
     if (!this._context.hasOwnProperty(listName)) {
       return;
     }
-    console.log('goodbye message: ' + "goodbye slave: " + this._content['id']);
-    delete(this._context[listName][this._content['id']]);
+    console.log('goodbye message: ' + "goodbye slave: " + this._content.id);
+    delete(this._context[listName][this._content.id]);
+    this._context._messageIn.emit('device_disconnected', this._content.id);
   }
 
 }

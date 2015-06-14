@@ -5,8 +5,8 @@
 import Exchanger from './Exchanger.js'
 
 export default class ExchangeSlave extends Exchanger {
-  constructor(messageOut, messageIn, role) {
-    super(messageOut, messageIn, role);
+  constructor(messageOut, messageIn, options) {
+    super(messageOut, messageIn, options);
   }
 
   /**

@@ -5,8 +5,8 @@
 import Exchanger from './Exchanger.js'
 
 export default class ExchangeManager extends Exchanger {
-  constructor(messageOut, messageIn, role) {
-    super(messageOut, messageIn, role);
+  constructor(messageOut, messageIn, options) {
+    super(messageOut, messageIn, options);
   }
 
   /**
@@ -23,14 +23,14 @@ export default class ExchangeManager extends Exchanger {
    * @param {String} event
    * @param {Arguments} args
    */
-  emit(event, key, ...args) {
+  emit(event, ...args) {
     if (!this.isConnected) {
       return;
     }
 
     let { message: message, callback: callback } = super.emit(...args);
 
-    this._messageOut.emit('send', key, JSON.stringify({ key: event, value: message }));
+    this._messageOut.emit('send', JSON.stringify({ key: event, value: message }));
 
     if (callback) {
       callback();

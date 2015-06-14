@@ -5,12 +5,13 @@
 import events from "events"
 import socketClient from 'socket.io-client'
 import getmac from 'getmac'
-import ValidateOptions from './lib/ValidateOptions.js'
-import AnalyseMessage from './lib/AnalyseMessage.js'
+import ValidateOptions from './lib/ValidateOptions'
+import AnalyseMessage from './lib/analyse/AnalyseMessage'
+import DeviceRole from './lib/DeviceRole'
 import { _extend } from 'util'
 
-
 export default class ShifterbeltClient {
+
   /**
    *
    * @param {Object} options
@@ -21,7 +22,7 @@ export default class ShifterbeltClient {
     this._messageIn = new events.EventEmitter();
 
     this._analyseMessage = {};
-    this._exchange = {};
+    this._deviceRole = {};
 
     // Setted dynamically
     this._masters = {};
@@ -42,20 +43,20 @@ export default class ShifterbeltClient {
    */
   init(options) {
 
-    let valide = (new ValidateOptions(options)).execute();
+    let valid = (new ValidateOptions(options)).execute();
 
-    if (valide.err) {
-      return console.log(valide.err.message);
+    if (valid.err) {
+      return console.log(valid.err.message);
     }
 
-    this._socket = socketClient(valide.result.url, { query: valide.result.options });
+    this._socket = socketClient(valid.result.url, { query: valid.result.options });
 
     this._socket.on('connect', () => {
       this._socket.on('error_system', (message) => {
         this._messageInternalOut.emit('error', message);
       });
 
-      this._socket.emit('authenticate', JSON.stringify(valide.result.raw));
+      this._socket.emit('authenticate', JSON.stringify(valid.result.raw));
 
       this._socket.on('authenticated', () => {
         this._authenticated();
@@ -63,7 +64,7 @@ export default class ShifterbeltClient {
     });
 
     this._socket.on('disconnect', () => {
-      this._exchange.isConnected = false;
+      this._deviceRole.isConnected = false;
     });
   }
 
@@ -72,13 +73,10 @@ export default class ShifterbeltClient {
    * @private
    */
   _authenticated() {
-    this._analyseMessage = new AnalyseMessage(this, (role) => {
-      let Exchange = require(`./lib/Exchange${role.charAt(0).toUpperCase()}${role.substring(1).toLowerCase()}.js`);
+    this._analyseMessage = new AnalyseMessage(this, (deviceRole) => {
+      this._deviceRole = deviceRole.device;
 
-      this._exchange = new Exchange(this._messageOut, this._messageIn, role);
-      this._exchange.isConnected = true;
-
-      this._messageInternalOut.emit('connect', this._exchange);
+      this._messageInternalOut.emit('connect', this._deviceRole);
     });
 
     this._socket.on('message', (message) => {
@@ -114,7 +112,8 @@ export default class ShifterbeltClient {
       let result = JSON.parse(message.content.toString());
 
       if (result.hasOwnProperty('slaveId')) {
-        return this._messageIn.emit(result['key'], result['slaveId'], result['value']);
+        //return this._messageIn.emit(result['key'], result['slaveId'], result['value']);
+        return this._messageIn.emit(result['slaveId'], {key: result['key'], value: result['value']});
       } else {
         return this._messageIn.emit(result['key'], result['value']);
       }

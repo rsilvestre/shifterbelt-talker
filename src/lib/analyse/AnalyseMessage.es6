@@ -2,6 +2,7 @@
  * Created by michaelsilvestre on 7/06/15
  */
 
+import DeviceRole from '../DeviceRole'
 import AnalyseContentAdd from './AnalyseContentAdd.js'
 import AnalyseContentRemove from './AnalyserContentRemove.js'
 import { _extend } from 'util'
@@ -14,7 +15,7 @@ export default class AnalyseMessage {
 
   _identification(content) {
     _extend(this._context, content);
-    this._connectCb(this._context['role']);
+    this._connectCb(new DeviceRole(this._context._messageOut, this._context._messageIn, this._context['role']));
   }
 
   _connection(content) {

@@ -2,18 +2,32 @@
  * Created by michaelsilvestre on 7/06/15
  */
 
+import { _extends } from 'util'
+
 export default class Exchanger {
   /**
    *
    * @param {events.EventEmitter} messageOut
    * @param {events.EventEmitter} messageIn
-   * @param {String} role
+   * @param {Object} options
    */
-  constructor(messageOut, messageIn, role) {
+  constructor(messageOut, messageIn, options) {
     this._messageOut = messageOut;
     this._messageIn = messageIn;
     this._connected = false;
-    this._role = role;
+    this._role = "";
+    this._deviceId = null;
+    this.initObject(options);
+  }
+
+  /**
+   *
+   * @param {Object} options
+   */
+  initObject(options) {
+    Object.keys(options).forEach((key) => {
+      this[`_${key}`] = options[key];
+    });
   }
 
   /**
@@ -53,10 +67,14 @@ export default class Exchanger {
 
   /**
    *
-   * @returns {String|*|Exchanger.role}
+   * @returns {String}
    */
   get role() {
     return this._role;
+  }
+
+  get deviceId() {
+    return this._deviceId;
   }
 
   /**
