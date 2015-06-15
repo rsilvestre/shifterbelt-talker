@@ -14,13 +14,16 @@ export default class AnalyseContentAdd extends Analyser {
     if (!this._context.hasOwnProperty(listName)) {
       return;
     }
+    if (this._context[listName].hasOwnProperty(this._content['id'])) {
+      return;
+    }
     console.log('send: welcome message: ' + "hello slave: " + this._content['id']);
     this._context[listName][this._content['id']] = this._content;
     this._context._socket.emit('message', JSON.stringify({
       key: this._content['id'],
       message: JSON.stringify({ key: 'event', value: "Welcome slave: " + this._content['id'] })
     }));
-    this._context._messageIn.emit('device_connected', this._content.id);
+    this._context._messageIn.emit('device_connect', this._content.id);
   }
 }
 
