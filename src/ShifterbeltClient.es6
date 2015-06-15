@@ -18,11 +18,11 @@ export default class ShifterbeltClient {
    */
   constructor(options) {
     this._messageInternalOut = new events.EventEmitter();
-    this._messageOut = null;
-    this._messageIn = null;
+    this._messageOut = new events.EventEmitter();
+    this._messageIn = new events.EventEmitter();
 
-    this._analyseMessage = null;
-    this._deviceRole = null;
+    this._analyseMessage = {};
+    this._deviceRole = {};
 
     // Setted dynamically
     //this._masters = {};
@@ -52,9 +52,6 @@ export default class ShifterbeltClient {
     this._socket = socketClient(valid.result.url, { query: valid.result.options });
 
     this._socket.on('connect', () => {
-      this._messageOut = new events.EventEmitter();
-      this._messageIn = new events.EventEmitter();
-
       this._socket.on('error_system', (message) => {
         this._messageInternalOut.emit('error', message);
       });
@@ -68,15 +65,6 @@ export default class ShifterbeltClient {
 
     this._socket.on('disconnect', () => {
       this._deviceRole.isConnected = false;
-      this._messageInternalOut.emit('disconnect');
-      this._messageIn.emit('disconnect');
-      this._messageIn.removeAllListeners('');
-
-      this._messageOut = null;
-      this._messageIn = null;
-
-      this._analyseMessage = null;
-      this._deviceRole = null;
     });
   }
 
@@ -96,7 +84,6 @@ export default class ShifterbeltClient {
     });
 
     this._socket.on('service', (message) => {
-      console.log('receive service message');
       this._internelOnService(message);
     });
 
