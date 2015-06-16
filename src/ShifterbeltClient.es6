@@ -52,6 +52,14 @@ export default class ShifterbeltClient {
     this._socket = socketClient(valid.result.url, { query: valid.result.options });
 
     this._socket.on('connect', () => {
+      process.once('SIGINT', () => {
+        this._socket.emit('service', 'disconnect');
+        this._socket.close();
+        setTimeout(() => {
+          console.log('Thank you and see you later');
+          process.exit(0);
+        }, 1000);
+      });
       this._socket.on('error_system', (message) => {
         this._messageInternalOut.emit('error', message);
       });
@@ -64,6 +72,7 @@ export default class ShifterbeltClient {
     });
 
     this._socket.on('disconnect', () => {
+      console.log('The connection with the sever has been lost...');
       this._deviceRole.isConnected = false;
     });
   }
@@ -113,7 +122,7 @@ export default class ShifterbeltClient {
 
       if (result.hasOwnProperty('slaveId')) {
         //return this._messageIn.emit(result['key'], result['slaveId'], result['value']);
-        return this._messageIn.emit(result['slaveId'], {key: result['key'], value: result['value']});
+        return this._messageIn.emit(result['slaveId'], { key: result['key'], value: result['value'] });
       } else {
         return this._messageIn.emit(result['key'], result['value']);
       }

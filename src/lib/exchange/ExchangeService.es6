@@ -38,7 +38,6 @@ export default class ExchangeService extends Exchanger {
 
       this._messageInTmp.on('device_disconnect', (deviceId) => {
         localMessageIn.emit('disconnect');
-        exchange = null;
       });
 
       this._messageInTmp.on('disconnect', (deviceId) => {

@@ -32,9 +32,6 @@ describe('Instantiate function', function() {
     expect(shifterbeltClient).to.be.instanceOf(Object);
     expect(shifterbeltClient).to.have.property('_authenticated');
     expect(shifterbeltClient).to.have.property('_internalOnMessage');
-    expect(shifterbeltClient).to.have.property('_exchange');
-    expect(shifterbeltClient).to.have.property('_managers');
-    expect(shifterbeltClient).to.have.property('_masters');
     expect(shifterbeltClient).to.have.property('_slaves');
     expect(shifterbeltClient).to.have.property('_messageIn');
     expect(shifterbeltClient).to.have.property('_messageOut');
