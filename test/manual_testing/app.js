@@ -23,12 +23,12 @@ shifterbeltClient.on('connect', function(socket) {
       clearInterval(intervalStop);
     })
   });
-  //var countSlave = 0;
-  //if (socket.role === "slave") {
-  //  setInterval(function() {
-  //    socket.emit('test', "first device message, " + (countSlave++));
-  //  }, 3000);
-  //}
+  var countSlave = 0;
+  if (socket.role === "slave") {
+    setInterval(function() {
+      socket.emit('test', "first device message, " + (countSlave++));
+    }, 3000);
+  }
 
   socket.on('event', function(message) {
     console.log('message: ' + message);

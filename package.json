@@ -1,6 +1,6 @@
 {
   "name": "shifterbelt-talker",
-  "version": "0.1.15",
+  "version": "0.1.16",
   "preferGlobal": false,
   "description": "Client to connect on shifterbelt",
   "main": "lib/ShifterbeltClient.js",
