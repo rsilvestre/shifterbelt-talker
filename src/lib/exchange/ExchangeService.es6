@@ -36,15 +36,18 @@ export default class ExchangeService extends Exchanger {
 
       exchange.isConnected = true;
 
-      this._messageInTmp.on('device_disconnect', (deviceId) => {
+      this._messageInTmp.on('device_disconnect|'+deviceId, (deviceId) => {
         localMessageIn.emit('disconnect');
         this._messageInTmp.removeAllListeners(deviceId);
+        this._messageInTmp.removeAllListeners('device_disconnect|'+deviceId);
         //localMessageOut.removeAllListeners('send');
 
       });
 
       this._messageInTmp.on('disconnect', (deviceId) => {
         localMessageIn.emit('disconnect');
+        this._messageInTmp.removeAllListeners(deviceId);
+        this._messageInTmp.removeAllListeners('device_disconnect|'+deviceId);
       });
     });
   }

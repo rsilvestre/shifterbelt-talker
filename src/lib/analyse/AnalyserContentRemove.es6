@@ -16,7 +16,7 @@ export default class AnalyseContentRemove extends Analyser {
     }
     console.log('goodbye message: ' + "goodbye slave: " + this._content.id);
     delete(this._context[listName][this._content.id]);
-    this._context._messageIn.emit('device_disconnect', this._content.id);
+    this._context._messageIn.emit('device_disconnect|'+this._content.id, this._content.id);
   }
 
 }

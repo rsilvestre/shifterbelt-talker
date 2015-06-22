@@ -20,6 +20,7 @@ shifterbeltClient.on('connect', function(socket) {
       service.emit('test', 'first device message, ' + (countMaster++));
     }, 3000);
     service.on('disconnect', function() {
+      console.log('device disconnected');
       clearInterval(intervalStop);
     })
   });
